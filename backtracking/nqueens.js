@@ -5,41 +5,58 @@ const arr = [
   [0, 0, 0, 0],
 ];
 
+const deepCopy = (objec) => {
+    if(typeof objec !== 'object') return null;
+    const newObject = Array.isArray(objec) ? [] : {};
+    const keys = Object.keys(objec);
+    for(const key of keys){
+        if(typeof objec[key] === 'object') {
+            newObject[key] = deepCopy(objec[key]);
+        } else {
+            newObject[key] = objec[key];
+        }
+    }
+    return newObject;
+}
+
 //identify the number of ways to put queen in each row without getting crossed
-function NQueensProblem(arr, row, column) {
-  function isAttacked(row, column,N) {
-    for(let i=0; i<N; i++){
-        if(arr[i][column] == 1)
-        {
-            return true;
-        }
+function NQueensProblem(arr, row) {
+  if (row === arr.length) {
+    console.log(deepCopy(arr));
+    return;
+  }
+
+  function isAttacked(row, column) {
+    //attack checked on columns on previous rows.
+    for (let i = 0; i < row; i++) {
+      if (arr[i][column] == 1) {
+        return true;
+      }
+    }
+    //cross attack on the left
+    for (let i = row - 1, j = column - 1; i >= 0 && j >= 0; i--, j--) {
+      if (arr[i][j] == 1) {
+        return true;
+      }
     }
 
-    for(let i= row, j =column; i>=0, i< N, j>=0, j<N; i--,j--){
-        if(arr[i][j] == 1){
-            return true;
-        }
-    }
-
-    for(let i= row, j =column; i>=0, i<N, j<N; i--,j++){
-        if(arr[i][j] == 1){
-            return true;
-        }
+    //cross attack on the right
+    for (let i = row - 1, j = column + 1; i >= 0 && j < arr.length; i--, j++) {
+      if (arr[i][j] == 1) {
+        return true;
+      }
     }
 
     return false;
   }
-  // arr[row][column] = 1;
 
-  // if(!isAttacked){
-  //     NQueensProblem(arr,row+1, column);
-  // }
-  // arr[row][column] = 0;
-  for (let i = row; i < arr.length; i++) {
-    for (let j = column; j < arr.length; j++) {
-    
+  for (let i = 0; i < arr.length; i++) {
+    arr[row][i] = 1;
+    if (!isAttacked(row, i)) {
+      NQueensProblem(arr, row + 1);
     }
+    arr[row][i] = 0;
   }
 }
 
-NQueensProblem(arr, 0, 0);
+NQueensProblem(arr, 0);
