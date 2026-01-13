@@ -37,3 +37,27 @@ for(let i=1; i< boxes.length; i++){
 console.log("Heights of the items that can stacked is", Math.max(...heights));
 
 //recursive top down approach
+
+let cache = new Map();
+
+
+function recursive(n){
+    if(cache.has(n)) return cache.get(n);
+    if(n ==0){
+        cache.set(0, boxes[0].h);
+        return cache.get(n);
+    }
+    let maxHeight = boxes[n].h;
+    for(let i = 0; i< n; i++){
+        let elementHeight = recursive(i);
+        if((boxes[i].w < boxes[n].w && boxes[i].d <boxes[n].d )){
+            maxHeight = Math.max(elementHeight+boxes[n].h, maxHeight);
+        }
+    }
+    cache.set(n, maxHeight);
+    return cache.get(n);
+}
+
+let maxHeight = 0;
+console.log(Math.max(...(boxes.map((x,index) => recursive(index)))))
+console.log('Program ended');
